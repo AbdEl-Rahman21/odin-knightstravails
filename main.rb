@@ -11,49 +11,37 @@ def check_input(start_point, end_point = [0, 0])
   true
 end
 
+def get_children(current, array, &block)
+  i = 2
+  j = 1
+
+  2.times do
+    temp = [current.coordinates[0] + i, current.coordinates[1] - j]
+
+    block.call(array, temp, current) if check_input(temp)
+
+    temp = [current.coordinates[0] + i, current.coordinates[1] + j]
+
+    block.call(array, temp, current) if check_input(temp)
+
+    temp = [current.coordinates[0] - i, current.coordinates[1] - j]
+
+    block.call(array, temp, current) if check_input(temp)
+
+    temp = [current.coordinates[0] - i, current.coordinates[1] + j]
+
+    block.call(array, temp, current) if check_input(temp)
+
+    i, j = j, i
+  end
+end
+
 def traverse(current, end_point, array = [])
   return current if current.coordinates == end_point
 
-  lam = lambda { |array, temp, current|
-    array.push(Node.new(temp, current)) if current.parent.nil? || temp != current.parent.coordinates
-  }
-
-  temp = [current.coordinates[0] + 2, current.coordinates[1] - 1]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] + 2, current.coordinates[1] + 1]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] - 2, current.coordinates[1] - 1]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] - 2, current.coordinates[1] + 1]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  #---------------------------------
-
-  temp = [current.coordinates[0] + 1, current.coordinates[1] - 2]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] + 1, current.coordinates[1] + 2]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] - 1, current.coordinates[1] - 2]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  temp = [current.coordinates[0] - 1, current.coordinates[1] + 2]
-
-  lam.call(array, temp, current) if check_input(temp)
-
-  array.each { |e| print "#{e.coordinates} \s" }
-  p '/n'
+  get_children(current, array) do |arr, temp, curr|
+    arr.push(Node.new(temp, curr)) if curr.parent.nil? || temp != curr.parent.coordinates
+  end
 
   traverse(array.shift, end_point, array)
 end
@@ -61,13 +49,11 @@ end
 def knight_moves(start_point, end_point)
   return nil unless check_input(start_point, end_point)
 
-  temp = traverse(Node.new(start_point), end_point)
+  temp = traverse(Node.new(start_point), end_point).trace
 
-  a = temp.trace(temp)
+  puts "You made it in #{temp.length - 1} moves!  Here's your path:"
 
-  puts "You made it in #{a.length - 1} moves!  Here's your path:"
-
-  a.each { |e| p e.coordinates }
+  temp.each { |e| puts e.coordinates.to_s }
 end
 
-p knight_moves([3, 3], [4, 3])
+knight_moves([3, 3], [4, 3])

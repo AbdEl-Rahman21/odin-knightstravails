@@ -8,7 +8,7 @@ class Node
     @coordinates = coordinates
   end
 
-  def trace(node, array = [])
+  def trace(node = self, array = [])
     return array if node.nil?
 
     array.unshift(node)
