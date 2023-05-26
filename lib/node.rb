@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Node
   attr_reader :parent, :coordinates
 
@@ -7,7 +9,7 @@ class Node
   end
 
   def trace(node, array = [])
-    return if node.nil?
+    return array if node.nil?
 
     array.unshift(node)
 
